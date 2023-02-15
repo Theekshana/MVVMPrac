@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 
 class LikeViewModel : ViewModel() {
 
-    //var likeCount:Int = 0
 
     private val _likeCount = MutableLiveData<Int>(0)
     private val _DislikeCount = MutableLiveData<Int>(0)

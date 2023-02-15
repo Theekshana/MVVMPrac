@@ -11,16 +11,15 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel: LikeViewModel by viewModels()
 
+    private lateinit var binding:ActivityMainBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // setContentView(R.layout.activity_main)
 
-        val binding: ActivityMainBinding =
+        binding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        val sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-
 
         //-- Data binding --
         binding.likeVM = viewModel
@@ -30,32 +29,47 @@ class MainActivity : AppCompatActivity() {
 
         binding.likeBtn.setOnClickListener {
             viewModel.PerformLike()
-            editor.apply {
-                putString("LIKE", binding.textViewLikeCount.text.toString())
-                apply()
-            }
 
         }
 
         binding.disLikeBtn.setOnClickListener {
             viewModel.PerformDisLike()
-            editor.apply {
-                putString("DISLIKE", binding.textViewDislikeCount.text.toString())
-                apply()
-            }
+
 
         }
 
-        binding.loadData.setOnClickListener {
-            val load = sharedPref.getString("LIKE", null)
-            val load1 = sharedPref.getString("DISLIKE", null)
-            binding.textViewLikeCount.setText(load)
-            binding.textViewDislikeCount.setText(load1)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        val sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        editor.apply {
+            //putString("LIKE", binding.textViewLikeCount.text.toString())
+            putString("LIKE", viewModel.likeCount.value.toString())
+            putString("DISLIKE", viewModel.dislikeCount.value.toString())
+            apply()
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val sharedPref = getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        val load = sharedPref.getString("LIKE", null)
+        val load1 = sharedPref.getString("DISLIKE", null)
+
+        binding.textViewLikeCount.setText(load)
+        binding.textViewDislikeCount.setText(load1)
+
 
 
     }
 
 }
+
 
 
